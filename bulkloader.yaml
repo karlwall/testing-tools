@@ -710,8 +710,7 @@ transformers:
     - property: vertical_id
       external_name: vertical_id
       # Type: Integer Stats: 13 properties of this type in this kind.
-      import_transform: transform.create_foreign_key("core_vertical", key_is_id=True)
-      export_transform: transform.none_if_empty(unicode)
+      import_transform: transform.none_if_empty(int)
 
 
 - kind: core_location
