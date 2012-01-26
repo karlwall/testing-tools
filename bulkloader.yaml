@@ -540,6 +540,7 @@ transformers:
     - property: __key__
       external_name: key
       export_transform: transform.key_id_or_name_as_string
+      import_transform: transform.create_foreign_key("core_design", key_is_id=True)
 
     - property: carousel_height
       external_name: carousel_height
