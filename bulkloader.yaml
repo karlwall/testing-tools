@@ -46,6 +46,7 @@ transformers:
     - property: __key__
       external_name: key
       export_transform: transform.key_id_or_name_as_string
+      import_transform: transform.create_foreign_key("analytics_credentials", key_is_id=True)
 
     - property: email
       external_name: email
@@ -696,9 +697,10 @@ transformers:
 - kind: core_industry
   connector: csv
   property_map:
-    - property: id 
+    - property: __key__ 
       external_name: key
       export_transform: transform.key_id_or_name_as_string
+      import_transform: transform.create_foreign_key("core_industry", key_is_id=True)
 
     - property: name
       external_name: name
@@ -707,7 +709,8 @@ transformers:
     - property: vertical_id
       external_name: vertical_id
       # Type: Integer Stats: 13 properties of this type in this kind.
-      export_transform: transform.key_id_or_name_as_string
+      import_transform: transform.create_foreign_key("core_vertical", key_is_id=True)
+      export_transform: transform.none_if_empty(unicode)
 
 
 - kind: core_location
