@@ -1,0 +1,29 @@
+Downloading and Uploading data and the App Engine Datastore
+
+Downloading and uploading data to the app engine datastore is documented at http://code.google.com/appengine/docs/python/tools/uploadingdata.html
+
+Before downloading or uploading data you need to have a .yaml file that describes the datastore that you want to access.  If you don't already have such a file you can create one by running this command:
+
+python path/to/appengineSDK/bulkloader.py --create_config --filename=bulkloader.yaml --url=http://a-server.bonlineapp.com/_ah/remote_api/ 
+
+The .yaml file is conventionally named bulkloader.yaml; remote api must be activated in your app's app.yaml.
+
+Once you have created a bulkloader.yaml file you must edit it as described in the Google documentation.  Note that the import/export transformations referred to in the documentaion are described in the comments in path/to/appengineSDK/google/appengine/ext/bulkload/transform.py
+
+The bulkloader.yaml file in the testing-tools repository has been edited to handle the core_vertical, core_industry and core_design kinds.
+
+
+To download data from a datastore, run:
+
+python path/to/appengineSDK/bulkloader.py  --config_file=bulkloader.yaml --download --url=http://a-server.bonlineapp.com/_ah/remote_api/  --kind=core_vertical --filename=mydata.csv --namespace=-global-
+
+The --kind argument specifies the "table" that you wish to download.  Only one kind may be downloaded at a time.
+
+To upload data to a datastore, run:
+
+python path/to/appengineSDK/bulkloader.py --config_file=bulkloader.yaml --url=http://a-server.bonlineapp.com/_ah/remote_api/   --filename=mydata.csv  --kind=core_industry --namespace=-global-
+
+IMPORTANT: the upload process inserts data directly into the datastore.  It doesn't know about foreign key relationships, so if your data contains a key to another kind you must make sure that the correct value is uploaded, or edit the datastore after the upload.
+
+
+
