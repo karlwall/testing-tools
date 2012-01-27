@@ -6,10 +6,6 @@ in repo.
 
 """
 
-# get industries from $server
-# for each industry, check in $repo
-# -- if yaml exists
-# --- if yaml is valid yaml file
 
 import csv
 import os
@@ -21,8 +17,12 @@ import urllib2
 
 import yaml
 
+
+
 VERTICAL = "core_vertical"
 INDUSTRY = "core_industry"
+
+
 
 def main():
     """Main function."""
@@ -33,10 +33,22 @@ def main():
     except IndexError:
         usage()
         return 1
+    prepare()
     download(server, google_appengine_path)
     verticals = load_data()
     check(repo, verticals)
     return 0
+
+def prepare():
+    """
+    Prepare environment.
+
+    """
+    # bulkloader.py won't overwrite files.
+    for kind in (INDUSTRY, VERTICAL):
+        path = _get_csv_path(kind)
+        if os.path.exists(path):
+            os.remove(path)
 
 def download(server, google_appengine_path):
     """
@@ -53,8 +65,8 @@ def download(server, google_appengine_path):
                 "--kind=%s" % kind,
                 "--namespace=-global-"] 
         # run command
-        rc = subprocess.call(args)
-        if rc != 0:
+        rcode = subprocess.call(args)
+        if rcode != 0:
             raise IOError("Download failed for kind %s" % kind)
     return
 
@@ -89,7 +101,6 @@ def check(repo, verticals):
 
     """
     for vertical in verticals:
-        results = []
         for industry in verticals[vertical]:
             url = _get_yaml_url(repo, vertical, industry)
             try:
@@ -102,24 +113,21 @@ def check(repo, verticals):
                     print "Status code was %d" % ex.code
                 except AttributeError:
                     pass
-                results.append("E")
                 break
             try:
                 yaml.load(response.read())
             except yaml.YAMLError as ex:
                 print "Attempt to load yaml file for vertical %s industry %s failed" % (vertical, industry)
                 print "%s" % ex
-                results.append("X")
                 break
-            results.append(".")
-        print "".join(results)
     return
 
 
 
 
 def usage():
-    print >> sys.stderr, "%s AppEngineServer StaticRepository" % __file__
+    """Usage message. """
+    print >> sys.stderr, "Usage: %s AppEngineServer StaticRepository PathToGoogleAppEngineSDK" % __file__
 
 
 
@@ -128,11 +136,8 @@ def _get_csv_path(name):
     """Gets path to csv file for kind. """
     return os.path.join(tempfile.gettempdir(), "%s" % (name + ".csv"))
 
-#
-# The _get_yaml_url function is taken from bonline.signup.mapper
-# as the bonline app may not be in sys.path.
-#
 def _get_yaml_url(repo, vertical, industry):
+    """Builds url of yaml file in static repository. """
     folder = slugify(unicode(vertical))
     filename = slugify(unicode(industry)) + ".yaml"
     return "http://%s/static/industries/%s/%s" % (repo, folder, filename)
