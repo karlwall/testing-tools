@@ -542,35 +542,18 @@ transformers:
       export_transform: transform.key_id_or_name_as_string
       import_transform: transform.create_foreign_key("core_design", key_is_id=True)
 
-    - property: carousel_height
-      external_name: carousel_height
-      # Type: String Stats: 21 properties of this type in this kind.
-
-    - property: carousel_width
-      external_name: carousel_width
-      # Type: String Stats: 21 properties of this type in this kind.
-
-    - property: default
-      external_name: default
-      # Type: Boolean Stats: 21 properties of this type in this kind.
-      import_transform: transform.regexp_bool('true', re.IGNORECASE)
-
     - property: displayname
       external_name: displayname
       # Type: String Stats: 21 properties of this type in this kind.
-
-    - property: industry_id
-      external_name: industry_id
-      # Type: Integer Stats: 21 properties of this type in this kind.
-      import_transform: transform.none_if_empty(int)
 
     - property: name
       external_name: name
       # Type: String Stats: 21 properties of this type in this kind.
 
-    - property: structure
-      external_name: structure
-      # Type: String Stats: 21 properties of this type in this kind.
+    - property: vertical_id
+      external_name: vertical_id
+      # Type: Integer Stats: 21 properties of this type in this kind.
+      import_transform: transform.none_if_empty(int)
 
 
 - kind: core_hours
